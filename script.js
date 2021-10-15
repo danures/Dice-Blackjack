@@ -14,7 +14,7 @@ const btnNew = document.querySelector('.btn--new');
 const btnRoll = document.querySelector('.btn--roll');
 const btnHold = document.querySelector('.btn--hold');
 
-let  activePlayer, playing, finalScores, currentScores, finishedTurn;
+let activePlayer, playing, finalScores, currentScores, finishedTurn;
 
 //Starting conditions
 const init = function () {
@@ -39,115 +39,105 @@ init();
 
 //Switch active player
 const switchPlayer = function () {
-  
   activePlayer = activePlayer === 0 ? 1 : 0;
   player0El.classList.toggle('player--active');
   player1El.classList.toggle('player--active');
-    
 };
 
-
 const rollDice = function () {
-    if (playing) {
-        //Generating a random dice roll
-        const dice1 = Math.trunc(Math.random() * 6) + 1;
-        const dice2 = Math.trunc(Math.random() * 6) + 1;
-        const dice = dice1 + dice2;
-        if (finishedTurn) newRound();
+  if (playing) {
+    //Generating a random dice roll
+    const dice1 = Math.trunc(Math.random() * 6) + 1;
+    const dice2 = Math.trunc(Math.random() * 6) + 1;
+    const dice = dice1 + dice2;
+    if (finishedTurn) newRound();
 
-        //Display dice
-        diceEl1.classList.remove('hidden');
-        diceEl2.classList.remove('hidden');
-        diceEl1.src = `dice-${dice1}.png`;
-        diceEl2.src = `dice-${dice2}.png`;
-        // Rolling dice functionality
-        if (currentScores[activePlayer] + dice < 21) {
-
-            currentScores[activePlayer] += dice;
-            document.getElementById(`current--${activePlayer}`).textContent = currentScores[activePlayer];
-
-        } else if (currentScores[activePlayer] + dice === 21) {
-            currentScores[activePlayer] += dice;
-            finalScores[activePlayer] += 1;
-            document.getElementById(`current--${activePlayer}`).textContent = currentScores[activePlayer];
-            document.getElementById(`score--${activePlayer}`).textContent = finalScores[activePlayer];
-            finishedTurn = true;
-        } 
-        else {
-            currentScores[activePlayer] += dice;
-            document.getElementById(`current--${activePlayer}`).textContent = "Bust!";
-            activePlayer === 0 ? finalScores[1] += 1 : finalScores[0] += 1;
-            document.getElementById(`score--0`).textContent = finalScores[0];
-            document.getElementById(`score--1`).textContent = finalScores[1];
-            finishedTurn = true;
-        }
-        finishGame();
+    //Display dice
+    diceEl1.classList.remove('hidden');
+    diceEl2.classList.remove('hidden');
+    diceEl1.src = `dice-${dice1}.png`;
+    diceEl2.src = `dice-${dice2}.png`;
+    // Rolling dice functionality
+    if (currentScores[activePlayer] + dice < 21) {
+      currentScores[activePlayer] += dice;
+      document.getElementById(`current--${activePlayer}`).textContent =
+        currentScores[activePlayer];
+    } else if (currentScores[activePlayer] + dice === 21) {
+      currentScores[activePlayer] += dice;
+      finalScores[activePlayer] += 1;
+      document.getElementById(`current--${activePlayer}`).textContent =
+        currentScores[activePlayer];
+      document.getElementById(`score--${activePlayer}`).textContent =
+        finalScores[activePlayer];
+      finishedTurn = true;
+    } else {
+      currentScores[activePlayer] += dice;
+      document.getElementById(`current--${activePlayer}`).textContent = 'Bust!';
+      activePlayer === 0 ? (finalScores[1] += 1) : (finalScores[0] += 1);
+      document.getElementById(`score--0`).textContent = finalScores[0];
+      document.getElementById(`score--1`).textContent = finalScores[1];
+      finishedTurn = true;
     }
+    finishGame();
+  }
 };
 
 //Computer's turn to play
 const compTurn = async function () {
-
-    while (currentScores[0] > currentScores[1]) {
-        rollDice();
-        await new Promise(resolve => setTimeout(resolve, 1000));  //Delay for computer dice rolls
-    }
-    if (currentScores[1] > currentScores[0] && currentScores[1] <= 21) {
-        finalScores[1] += 1;
-        document.getElementById(`score--${activePlayer}`).textContent = finalScores[1];
-    } else if (currentScores[1] < currentScores[0]){
-        finalScores[0] += 1;
-        document.getElementById(`score--${activePlayer}`).textContent = finalScores[0];
-    }
-    finishedTurn = true;
+  while (currentScores[0] > currentScores[1]) {
+    rollDice();
+    await new Promise(resolve => setTimeout(resolve, 1000)); //Delay for computer dice rolls
+  }
+  if (currentScores[1] > currentScores[0] && currentScores[1] < 21) {
+    finalScores[1] += 1;
+    document.getElementById(`score--${activePlayer}`).textContent =
+      finalScores[1];
+  } else if (currentScores[1] < currentScores[0]) {
+    finalScores[0] += 1;
+    document.getElementById(`score--${activePlayer}`).textContent =
+      finalScores[0];
+  }
+  finishedTurn = true;
 };
 
-
 btnRoll.addEventListener('click', function () {
-    rollDice();
+  rollDice();
 });
 
 btnHold.addEventListener('click', function () {
-    if (playing && activePlayer === 0) {
-        switchPlayer();
-        compTurn();
-    }
+  if (playing && activePlayer === 0) {
+    switchPlayer();
+    compTurn();
+  }
 });
 
-  
 const finishGame = function () {
-    // Finish the game
-    if (finalScores[0] >= 5 || finalScores[1] >= 5) {
-        playing = false;
-        diceEl1.classList.add('hidden');
-        diceEl2.classList.add('hidden');
+  // Finish the game
+  if (finalScores[0] >= 5 || finalScores[1] >= 5) {
+    playing = false;
+    diceEl1.classList.add('hidden');
+    diceEl2.classList.add('hidden');
 
-        if (finalScores[0] > finalScores[1]) {
-            player0El.classList.add('player--winner');
-            player0El.classList.remove('player--active');
-        } else {
-            player1El.classList.add('player--winner');
-            player1El.classList.remove('player--active');
-        }
+    if (finalScores[0] > finalScores[1]) {
+      player0El.classList.add('player--winner');
+      player0El.classList.remove('player--active');
+    } else {
+      player1El.classList.add('player--winner');
+      player1El.classList.remove('player--active');
     }
+  }
 };
 
 //Set up a new round
 const newRound = function () {
-    diceEl1.classList.add('hidden');
-    diceEl2.classList.add('hidden');
-    finishedTurn = false;
-    currentScores = [0, 0];
-    if (activePlayer === 1) switchPlayer();
-    document.getElementById(`current--0`).textContent = 0;
-    document.getElementById(`current--1`).textContent = 0;
+  diceEl1.classList.add('hidden');
+  diceEl2.classList.add('hidden');
+  finishedTurn = false;
+  currentScores = [0, 0];
+  if (activePlayer === 1) switchPlayer();
+  document.getElementById(`current--0`).textContent = 0;
+  document.getElementById(`current--1`).textContent = 0;
 };
 
 //New game button
 btnNew.addEventListener('click', init);
-
-
-
-
-
-
