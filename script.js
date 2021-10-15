@@ -14,7 +14,7 @@ const btnNew = document.querySelector('.btn--new');
 const btnRoll = document.querySelector('.btn--roll');
 const btnHold = document.querySelector('.btn--hold');
 
-let scores, activePlayer, playing, finalScores, currentScores, finishedTurn;
+let  activePlayer, playing, finalScores, currentScores, finishedTurn;
 
 //Starting conditions
 const init = function () {
@@ -90,7 +90,7 @@ const compTurn = async function () {
 
     while (currentScores[0] > currentScores[1]) {
         rollDice();
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000));  //Delay for computer dice rolls
     }
     if (currentScores[1] > currentScores[0] && currentScores[1] <= 21) {
         finalScores[1] += 1;
@@ -123,11 +123,11 @@ const finishGame = function () {
         diceEl2.classList.add('hidden');
 
         if (finalScores[0] > finalScores[1]) {
-            document.querySelector(`.player--0`).classList.add('player--winner');
-            document.querySelector(`.player--0`).classList.remove('player--active');
+            player0El.classList.add('player--winner');
+            player0El.classList.remove('player--active');
         } else {
-            document.querySelector(`.player--1`).classList.add('player--winner');
-            document.querySelector(`.player--1`).classList.remove('player--active');
+            player1El.classList.add('player--winner');
+            player1El.classList.remove('player--active');
         }
     }
 };
